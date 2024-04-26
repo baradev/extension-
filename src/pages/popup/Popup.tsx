@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from '@assets/img/logo.svg';
 import '@pages/popup/Popup.css';
 import useStorage from '@src/shared/hooks/useStorage';
@@ -8,6 +8,13 @@ import withErrorBoundary from '@src/shared/hoc/withErrorBoundary';
 
 const Popup = () => {
   const theme = useStorage(exampleThemeStorage);
+  const [pageTitle, setPageTitle] = useState('');
+
+  const getPageTitle = () => {
+    chrome.runtime.sendMessage({ action: 'get-page-title' }, response => {
+      setPageTitle(response);
+    });
+  };
 
   return (
     <div
@@ -33,9 +40,10 @@ const Popup = () => {
             backgroundColor: theme === 'light' ? '#fff' : '#000',
             color: theme === 'light' ? '#000' : '#fff',
           }}
-          onClick={exampleThemeStorage.toggle}>
-          Toggle theme
+          onClick={getPageTitle}>
+          Get Page Title
         </button>
+        {pageTitle && <p>{pageTitle}</p>}
       </header>
     </div>
   );

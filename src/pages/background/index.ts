@@ -10,3 +10,16 @@ reloadOnUpdate('pages/background');
 reloadOnUpdate('pages/content/style.scss');
 
 console.log('background loaded');
+
+// Add listener for messages from the popup
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'get-page-title') {
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+      const currentTab = tabs[0];
+      if (currentTab) {
+        sendResponse(currentTab.title);
+      }
+    });
+    return true; // Keep the message channel open for asynchronous sendResponse
+  }
+});
